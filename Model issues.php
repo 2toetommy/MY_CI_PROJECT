@@ -14,16 +14,19 @@ call check() from model_sl ~
 ~~~~~~~~~~~~~~~~~~~~~~
 
 
-	function login(){
-		$this->load->helper("url");
-		$this->load->view("view_security");
-		$this->load->view("view_login");
-		$this->load->model('model_sl');
-		$data = $this->model_sl->check();
+function login(){
+	$this->load->model('model_sl');
+	$data['name'] = $this->model_sl->check();
+
+
+	$this->load->helper("url");
+	$this->load->view("view_security");
+	$this->load->view("view_login", $data);
+	
 
 
 
-	}
+}
 
 ~~~~~~~~~~~~~~~~~~~~~~
 ~ model_sl			 ~
@@ -34,21 +37,17 @@ class Model_sl extends CI_Model {
 
 	public function check() {
 
-		$this->db->select('id', 'username');
-		$t = $this->db->get('username', TRUE); ##I do reconise my table name is same as a collum in the table **if this is a issue right away i will change **
+		$query = $this->db->get('username');
+		$input = $this->input->get('username', TRUE);
 
-		if($t->num_rows() > 0) {
+		foreach ($query->result() as $row) {
+			$data[] = $row;
 
-			return TRUE;  ##return true so i can check in my next function that will be in this model
-			echo "Debug: Username ".$t." found";
-
-		} else {
-
-			return FALSE;
-			echo "Debug: Username not found";
+			
 		}
-
-	}
+		return $data;
+	}	
+	
 }
 
 ?>
@@ -56,8 +55,10 @@ class Model_sl extends CI_Model {
 ~~~~~~~~~~~~~~~~~~~~~~
 ~ view_login.php     ~
 ~~~~~~~~~~~~~~~~~~~~~~
+/* echos out username in from tabel*\
 
-
-<?php
-##page contains nothing todo with this YET. I dont know how to use the mode here for debuging....See model_sl ^
+<?php foreach ($name as $r) {
+	echo '<br><h1>' . $r->tusername . '</h1>';
+}
+			
 ?>
